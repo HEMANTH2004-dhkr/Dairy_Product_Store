@@ -1,0 +1,48 @@
+{% extends 'base.html' %} {% block title %}My Orders{% endblock %} {% block content %}
+<div class="container py-4">
+
+    <h1 class="text-center mb-5 fw-bold text-success">My Order History</h1>
+
+    {% if orders %}
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for order in orders %}
+        <div class="col">
+            <div class="card shadow-sm h-100 border-success card-hover">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Order #{{ order.id }}</h5>
+                    <p class="card-text"><strong>Placed on:</strong> {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+                    <p class="card-text">
+                        <strong>Status:</strong>
+                        <span class="badge 
+                            {% if order.status == 'Pending' %}bg-warning
+                            {% elif order.status == 'Processing' %}bg-info
+                            {% elif order.status == 'Shipped' %}bg-primary
+                            {% elif order.status == 'Delivered' %}bg-success
+                            {% elif order.status == 'Cancelled' %}bg-danger
+                            {% else %}bg-secondary
+                            {% endif %}
+                            text-white">{{ order.status }}</span>
+                    </p>
+                    <p class="card-text fw-bold">Total: ₹{{ order.total_price|floatformat:2 }}</p>
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-success w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center fs-5 text-muted">You have no orders yet.</p>
+    {% endif %}
+</div>
+
+<style>
+    .card-hover {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+</style>
+{% endblock %}

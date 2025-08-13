@@ -1,0 +1,25 @@
+{% extends 'base.html' %} {% block title %}Cancel Order #{{ order.id }}{% endblock %} {% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-4 text-success">Cancel Order #{{ order.id }}</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.reason.label_tag }} {{ form.reason }} {% if form.reason.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ form.reason.errors.as_text }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-danger w-100">Submit Cancellation</button>
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-secondary w-100 mt-3">Back to Order Details</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

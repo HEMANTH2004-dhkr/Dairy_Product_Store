@@ -1,0 +1,78 @@
+{% extends "base.html" %}{% load static %} {% block title %}Order Details{% endblock %} {% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5 fw-bold text-success">Order Details</h1>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Shipping & Billing Info -->
+        <div class="col-md-6">
+            <div class="card card-hover shadow-sm h-100 p-4">
+                <h4 class="mb-4 fw-bold text-success">Shipping & Billing Info</h4>
+                <p><strong>Full Name:</strong> {{ order.full_name }}</p>
+                <p><strong>Email:</strong> {{ order.email }}</p>
+                <p><strong>Phone:</strong> {{ order.phone }}</p>
+                <p><strong>Address:</strong> {{ order.address }}</p>
+                <p><strong>Payment Method:</strong> {{ order.payment_method|capfirst }}</p>
+                <p><strong>Status:</strong> <span class="text-success fw-semibold">{{ order.status }}</span></p>
+
+                {# Buttons added here #} {% if order.status == "Pending" and not order.is_cancelled %}
+                <a href="{% url 'cancel_order' order.id %}" class="btn btn-danger mt-3">Cancel Order</a> {% elif order.status == "Delivered" and not order.is_returned %}
+                <a href="{% url 'return_order' order.id %}" class="btn btn-warning mt-3">Return Order</a> {% endif %}
+
+                <p><strong>Order Date:</strong> {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+                <p><strong>Total Price:</strong> ₹{{ order.total_price|floatformat:2 }}</p>
+            </div>
+        </div>
+
+        <!-- Products Ordered -->
+        <div class="col-md-5">
+            <h4 class="mb-4 fw-bold text-success">Products Ordered</h4>
+            {% if order.items.all %}
+            <div class="row row-cols-1 g-3">
+                {% for item in order.items.all %}
+                <div class="col">
+                    <div class="card card-hover shadow-sm h-100 d-flex flex-row align-items-center">
+                        {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="product-img rounded-start me-3" /> {% else %}
+                        <img src="{% static 'images/no-image.png' %}" alt="No Image" class="product-img rounded-start me-3" /> {% endif %}
+                        <div>
+                            <h5 class="card-title text-success mb-1">{{ item.product.name }}</h5>
+                            <p class="card-text fw-bold mb-0">₹{{ item.product.price }}</p>
+                            <p class="card-text text-muted">Quantity: {{ item.quantity }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted text-center fs-5">No products found in this order.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    
+    .card-hover {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .product-img {
+        height: 120px;
+        object-fit: cover;
+        width: 120px;
+    }
+    
+    label {
+        font-weight: 600;
+        color: #198754;
+    }
+</style>
+{% endblock content %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-success">Welcome back, {{ user.username }}!</h2>
+
+    <div class="row">
+        <!-- User Info -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-success h-100 p-3">
+                <h5 class="text-success mb-3">Your Profile</h5>
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Member Since:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
+                <a href="{% url 'profile_edit' %}" class="btn btn-outline-success mt-3 w-100">Edit Profile</a>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="col-md-8">
+            <div class="card shadow-sm border-success h-100 p-3">
+                <h5 class="text-success mb-3">Recent Orders</h5>
+                {% if recent_orders %}
+                <ul class="list-group">
+                    {% for order in recent_orders %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Order #{{ order.id }}</strong> - {{ order.created_at|date:"M d, Y" }}
+                            <br /> Status: <span class="badge 
+                                {% if order.status == 'Pending' %}bg-warning
+                                {% elif order.status == 'Processing' %}bg-info
+                                {% elif order.status == 'Shipped' %}bg-primary
+                                {% elif order.status == 'Delivered' %}bg-success
+                                {% elif order.status == 'Cancelled' %}bg-danger
+                                {% else %}bg-secondary
+                                {% endif %}
+                                text-white">{{ order.status }}</span>
+                        </div>
+                        <a href="{% url 'order_detail' order.id %}" class="btn btn-success btn-sm">Details</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">You have no recent orders.</p>
+                {% endif %}
+                <a href="{% url 'order_history' %}" class="btn btn-outline-success mt-3 w-100">View All Orders</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="mt-5 d-flex justify-content-around">
+        <a href="{% url 'view_cart' %}" class="btn btn-success btn-lg">View Cart 🛒</a>
+        <a href="{% url 'order_history' %}" class="btn btn-success btn-lg">My Orders 📦</a>
+        <a href="{% url 'profile_edit' %}" class="btn btn-success btn-lg">Edit Profile ✏</a>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}
